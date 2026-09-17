@@ -49,6 +49,7 @@ def _apply_processor_column_modifications(config: DataDesignerConfig) -> None:
                         f"🛑 Processor '{processor.name}' adds column '{col_name}' which collides with an existing column."
                     )
                 config.columns.append(SeedDatasetColumnConfig(name=col_name))
+                existing_columns.add(col_name)
 
 
 def _resolve_and_add_seed_columns(config: DataDesignerConfig, seed_reader: SeedReader | None) -> None:

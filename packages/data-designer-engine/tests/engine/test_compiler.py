@@ -263,6 +263,22 @@ def test_compile_processor_columns_added_collision(resource_provider: ResourcePr
         compile_data_designer_config(builder.build(), resource_provider)
 
 
+def test_compile_processor_columns_added_duplicate(resource_provider: ResourceProvider):
+    """Test that specifying duplicate columns in columns_added raises InvalidConfigError."""
+    builder = DataDesignerConfigBuilder()
+    builder.with_seed_dataset(HuggingFaceSeedSource(path="hf://datasets/test/data.csv"))
+    builder.add_processor(
+        DropColumnsProcessorConfig(
+            name="pre_batch_add",
+            column_names=[],
+            columns_added=["state", "state"],
+        )
+    )
+
+    with pytest.raises(InvalidConfigError, match="collides with an existing column"):
+        compile_data_designer_config(builder.build(), resource_provider)
+
+
 def test_compile_processor_columns_removed_nonexistent(resource_provider: ResourceProvider):
     """Test that removing a non-existent column via columns_removed raises InvalidConfigError."""
     builder = DataDesignerConfigBuilder()
