@@ -457,7 +457,7 @@ _FORMAT_FIELD_REFERENCE_PATTERN = re.compile(
     r"([^{}!:]+)"
     r"(?:![sra])?"
     r"(?::[^{}]*(?:\{[^{}]*\}[^{}]*)*)?"
-    r"\}(?!\})"
+    r"\}"
 )
 
 

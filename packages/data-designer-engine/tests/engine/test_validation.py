@@ -346,6 +346,31 @@ def test_validate_detect_non_word_column_ref_with_literal_braces() -> None:
     assert violations[0].column == "non_word_ref_after_literal_brace"
 
 
+def test_validate_detect_f_string_syntax_with_adjacent_literal_closing_brace() -> None:
+    """Fallback preserves detection when an accidental format field is followed by an adjacent literal close brace."""
+    columns = [
+        SamplerColumnConfig(
+            name="random_number",
+            sampler_type="uniform",
+            params={"low": 0, "high": 10},
+        ),
+        SamplerColumnConfig(
+            name="valid_reference",
+            sampler_type="uniform",
+            params={"low": 0, "high": 10},
+        ),
+        LLMTextColumnConfig(
+            name="adjacent_brace_prompt",
+            prompt="Value {random_number}} and {{ valid_reference }}",
+            model_alias=STUB_MODEL_ALIAS,
+        ),
+    ]
+    violations = validate_prompt_templates(columns, [c.name for c in columns])
+    assert len(violations) == 1
+    assert violations[0].type == ViolationType.F_STRING_SYNTAX
+    assert violations[0].column == "adjacent_brace_prompt"
+
+
 def test_validate_column_config_with_multi_modal_context():
     column = LLMTextColumnConfig(
         name="image_description",
